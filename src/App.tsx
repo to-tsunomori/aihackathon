@@ -1,6 +1,18 @@
 import { useEffect, useState } from "react";
 import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
+import {
+  Container,
+  Typography,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  Box,
+  Link,
+  Paper,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 const client = generateClient<Schema>();
 
@@ -14,26 +26,58 @@ function App() {
   }, []);
 
   function createTodo() {
-    client.models.Todo.create({ content: window.prompt("Todo content") });
+    const content = window.prompt("Todo content");
+    if (content) {
+      client.models.Todo.create({ content });
+    }
   }
 
   return (
-    <main>
-      <h1>My todos</h1>
-      <button onClick={createTodo}>+ new</button>
-      <ul>
-        {todos.map((todo) => (
-          <li key={todo.id}>{todo.content}</li>
-        ))}
-      </ul>
-      <div>
-        🥳 App successfully hosted. Try creating a new todo.
-        <br />
-        <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <Typography variant="h3" component="h1" gutterBottom align="center">
+        My Todos
+      </Typography>
+      
+      <Box sx={{ mb: 3, display: "flex", justifyContent: "center" }}>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={createTodo}
+          size="large"
+        >
+          Add New Todo
+        </Button>
+      </Box>
+
+      <Paper elevation={3} sx={{ mb: 4 }}>
+        <List>
+          {todos.length === 0 ? (
+            <ListItem>
+              <ListItemText primary="No todos yet. Create your first one!" />
+            </ListItem>
+          ) : (
+            todos.map((todo) => (
+              <ListItem key={todo.id} divider>
+                <ListItemText primary={todo.content} />
+              </ListItem>
+            ))
+          )}
+        </List>
+      </Paper>
+
+      <Box sx={{ textAlign: "center" }}>
+        <Typography variant="body1" paragraph>
+          🥳 App successfully hosted with MUI! Try creating a new todo.
+        </Typography>
+        <Link
+          href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates"
+          target="_blank"
+          rel="noopener"
+        >
           Review next step of this tutorial.
-        </a>
-      </div>
-    </main>
+        </Link>
+      </Box>
+    </Container>
   );
 }
 
