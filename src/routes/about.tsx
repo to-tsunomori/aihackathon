@@ -1,0 +1,32 @@
+import { createFileRoute } from '@tanstack/react-router'
+import { Typography, Paper, Box } from '@mui/material'
+
+function About() {
+  return (
+    <Box>
+      <Typography variant="h3" component="h1" gutterBottom align="center">
+        About
+      </Typography>
+      
+      <Paper elevation={3} sx={{ p: 3 }}>
+        <Typography variant="body1" paragraph>
+          This is a sample application built with:
+        </Typography>
+        <ul>
+          <li>React 19</li>
+          <li>TanStack Router</li>
+          <li>Material-UI</li>
+          <li>AWS Amplify</li>
+          <li>Vite</li>
+        </ul>
+        <Typography variant="body1" paragraph>
+          The application demonstrates a modern React development stack with routing capabilities.
+        </Typography>
+      </Paper>
+    </Box>
+  )
+}
+
+export const Route = createFileRoute('/about')({
+  component: About,
+})
