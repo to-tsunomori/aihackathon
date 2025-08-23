@@ -19,6 +19,7 @@ const schema = a.schema({
 			authors: a.string(), // 著者
 			abstract: a.string(), // 概要
 			imageUrl: a.string(), // 画像URL
+			scolarDataKey: a.string(), // 論文データのS3キー
 			publishedDate: a.string(), // 発行日
 			overview: a.string(), // 概要
 			novelty: a.string(), // 新規性
