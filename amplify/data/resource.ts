@@ -25,14 +25,20 @@ const schema = a
 				tags: a.hasMany("tag", "scalarId"),
 			})
 			.secondaryIndexes((index) => [index("owner")])
-			.authorization((allow) => [allow.authenticated()]),
+			.authorization((allow) => [
+				allow.authenticated(),
+				allow.guest().to(["read"]),
+			]),
 		tag: a
 			.model({
 				name: a.string(), // タグ名
 				scalarId: a.string(), // スカラーID
 				scalar: a.belongsTo("Scalar", "scalarId"),
 			})
-			.authorization((allow) => [allow.authenticated()]),
+			.authorization((allow) => [
+				allow.authenticated(),
+				allow.guest().to(["read"]),
+			]),
 	})
 	.authorization((allow) => [
 		allow.resource(scolarDigest).to(["query", "mutate"]),
@@ -44,6 +50,9 @@ export const data = defineData({
 	schema,
 	authorizationModes: {
 		defaultAuthorizationMode: "userPool",
+		apiKeyAuthorizationMode: {
+			expiresInDays: 30,
+		},
 	},
 });
 

@@ -7,7 +7,6 @@ import {
 	Snackbar,
 	Alert,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import { ResearchPaperCard } from "./ResearchPaperCard";
 import { ResponsiveGrid } from "./ResponsiveComponents";
 import { useBreakpoint } from "../../hooks/useBreakpoint";
@@ -38,20 +37,12 @@ interface ResearchHubProps {
 	onPaperClick?: (paper: Scalar) => void;
 }
 
-export function ResearchHub({
-	scolars = [],
-	onAddPaper,
-	onPaperClick,
-}: ResearchHubProps) {
+export function ResearchHub({ scolars = [], onPaperClick }: ResearchHubProps) {
 	const { isMobile, isTablet } = useBreakpoint();
 	const { isAuthenticated } = useUser();
 	const [snackbarOpen, setSnackbarOpen] = useState(false);
-
-	const handleAddPaper = () => {
-		if (onAddPaper) {
-			onAddPaper();
-		}
-	};
+	const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
+	const [errorMessage, setErrorMessage] = useState("");
 
 	const handlePaperClick = (paper: Scalar) => {
 		if (onPaperClick) {
@@ -61,6 +52,10 @@ export function ResearchHub({
 
 	const handleSnackbarClose = () => {
 		setSnackbarOpen(false);
+	};
+
+	const handleErrorSnackbarClose = () => {
+		setErrorSnackbarOpen(false);
 	};
 
 	const handleUploadButtonClick = (event: React.MouseEvent) => {
@@ -77,14 +72,32 @@ export function ResearchHub({
 		const file = event.target.files?.[0];
 		if (!file) return;
 
+		// ファイルサイズチェック（4.3MB = 4.3 * 1024 * 1024 bytes）
+		const maxSize = 4.3 * 1024 * 1024;
+		if (file.size > maxSize) {
+			setErrorMessage(
+				"ファイルサイズが4.3MBを超えています。より小さなファイルをアップロードしてください。",
+			);
+			setErrorSnackbarOpen(true);
+			// ファイル入力をリセット
+			event.target.value = "";
+			return;
+		}
+
 		try {
 			if (file.type === "application/pdf") {
 				handlePDFUpload(file);
 			} else {
+				setErrorMessage("PDFファイルのみアップロード可能です。");
+				setErrorSnackbarOpen(true);
+				// ファイル入力をリセット
+				event.target.value = "";
 				return;
 			}
 		} catch (error) {
 			console.error("ファイル読み込みエラー:", error);
+			setErrorMessage("ファイルの読み込み中にエラーが発生しました。");
+			setErrorSnackbarOpen(true);
 		}
 	};
 
@@ -200,19 +213,8 @@ export function ResearchHub({
 					}}
 				>
 					<Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
-						まだ論文が追加されていません
+						ログインすることで、アップロードされた論文を表示されます。
 					</Typography>
-					<Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-						「論文を追加」ボタンから研究論文をアップロードしてください
-					</Typography>
-					<Button
-						variant="outlined"
-						startIcon={<AddIcon />}
-						onClick={handleAddPaper}
-						sx={{ px: 3, py: 1 }}
-					>
-						最初の論文を追加
-					</Button>
 				</Box>
 			)}
 
@@ -229,6 +231,22 @@ export function ResearchHub({
 					sx={{ width: "100%" }}
 				>
 					論文をアップロードするにはログインが必要です
+				</Alert>
+			</Snackbar>
+
+			{/* エラー用スナックバー */}
+			<Snackbar
+				open={errorSnackbarOpen}
+				autoHideDuration={6000}
+				onClose={handleErrorSnackbarClose}
+				anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+			>
+				<Alert
+					onClose={handleErrorSnackbarClose}
+					severity="error"
+					sx={{ width: "100%" }}
+				>
+					{errorMessage}
 				</Alert>
 			</Snackbar>
 		</Container>

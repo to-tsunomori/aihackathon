@@ -13,6 +13,8 @@ export function ResearchPaperCard({ paper, onClick }: ResearchPaperCardProps) {
 		}
 	};
 
+	const isProcessing = !paper.title || paper.title.trim() === "";
+
 	return (
 		<Card
 			sx={{
@@ -21,6 +23,7 @@ export function ResearchPaperCard({ paper, onClick }: ResearchPaperCardProps) {
 				flexDirection: "column",
 				cursor: onClick ? "pointer" : "default",
 				transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+				opacity: isProcessing ? 0.7 : 1,
 				"&:hover": {
 					transform: onClick ? "scale(1.02)" : "none",
 					boxShadow: onClick ? 4 : 1,
@@ -51,9 +54,11 @@ export function ResearchPaperCard({ paper, onClick }: ResearchPaperCardProps) {
 						lineHeight: 1.3,
 						mb: 1,
 						fontFamily: '"Newsreader", serif',
+						fontStyle: isProcessing ? "italic" : "normal",
+						color: isProcessing ? "text.secondary" : "text.primary",
 					}}
 				>
-					{paper.title}
+					{isProcessing ? "処理中..." : paper.title}
 				</Typography>
 
 				<Typography
@@ -75,9 +80,12 @@ export function ResearchPaperCard({ paper, onClick }: ResearchPaperCardProps) {
 						WebkitBoxOrient: "vertical",
 						overflow: "hidden",
 						lineHeight: 1.4,
+						fontStyle: isProcessing ? "italic" : "normal",
 					}}
 				>
-					{paper.abstract}
+					{isProcessing
+						? "論文を解析中です。数分後に画面更新お願いします..."
+						: paper.abstract}
 				</Typography>
 			</CardContent>
 		</Card>
