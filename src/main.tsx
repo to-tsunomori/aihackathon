@@ -14,6 +14,19 @@ Amplify.configure(outputs);
 
 // レスポンシブデザイン対応のカスタムテーマ
 const theme = createTheme({
+	palette: {
+		primary: {
+			main: "#3d99f5",
+		},
+		text: {
+			primary: "#1f2937",
+			secondary: "#6b7280",
+		},
+		background: {
+			default: "#ffffff",
+		},
+		divider: "#e5e7eb",
+	},
 	breakpoints: {
 		values: {
 			xs: 0,
@@ -21,27 +34,6 @@ const theme = createTheme({
 			md: 960,
 			lg: 1280,
 			xl: 1920,
-		},
-	},
-	typography: {
-		// レスポンシブタイポグラフィ
-		h1: {
-			fontSize: "clamp(2rem, 5vw, 3.5rem)",
-		},
-		h2: {
-			fontSize: "clamp(1.75rem, 4vw, 3rem)",
-		},
-		h3: {
-			fontSize: "clamp(1.5rem, 3.5vw, 2.5rem)",
-		},
-		h4: {
-			fontSize: "clamp(1.25rem, 3vw, 2rem)",
-		},
-		h5: {
-			fontSize: "clamp(1.125rem, 2.5vw, 1.5rem)",
-		},
-		h6: {
-			fontSize: "clamp(1rem, 2vw, 1.25rem)",
 		},
 	},
 	components: {
