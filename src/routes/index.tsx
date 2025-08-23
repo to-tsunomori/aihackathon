@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ResearchHub } from "../component/ResearchHub";
+import { ResearchHub } from "../component/scalarList/ResearchHub";
 import { Box } from "@mui/material";
 
 function Index() {

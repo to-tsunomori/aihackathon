@@ -6,7 +6,7 @@ import {
 	Chip,
 	Stack,
 } from "@mui/material";
-import { ResearchPaper } from "../types/research";
+import { ResearchPaper } from "../../types/research";
 
 interface ResearchPaperCardProps {
 	paper: ResearchPaper;

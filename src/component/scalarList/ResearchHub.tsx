@@ -2,8 +2,8 @@ import { Box, Typography, Button, Container, styled } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { ResearchPaperCard } from "./ResearchPaperCard";
 import { ResponsiveGrid } from "./ResponsiveComponents";
-import { useBreakpoint } from "../hooks/useBreakpoint";
-import { ResearchPaper } from "../types/research";
+import { useBreakpoint } from "../../hooks/useBreakpoint";
+import { ResearchPaper } from "../../types/research";
 import * as pdfjsLib from "pdfjs-dist";
 import BackupOutlinedIcon from "@mui/icons-material/BackupOutlined";
 

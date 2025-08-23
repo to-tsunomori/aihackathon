@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, BoxProps } from "@mui/material";
-import { useResponsiveValue } from "../hooks/useBreakpoint";
+import { useResponsiveValue } from "../../hooks/useBreakpoint";
 
 interface ResponsiveGridProps extends BoxProps {
 	// 各ブレイクポイントでのカラム数
