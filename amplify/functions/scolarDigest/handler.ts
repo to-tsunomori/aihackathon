@@ -44,17 +44,21 @@ export const handler: DynamoDBStreamHandler = async (event) => {
 
 			if (output && typeof output === "object" && "title" in output) {
 				console.log("DynamoDB update:", idString);
-				client.models.Scalar.update({
-					id: idString,
-					title: output.title as string,
-					authors: output.authors as string,
-					abstract: output.abstract as string,
-					publishedDate: output.publishedDate as number,
-					novelty: output.novelty as string,
-					originality: output.originality as string,
-					challenges: output.challenges as string,
-					relatedResearch: output.relatedResearch as string,
-				});
+				try {
+					await client.models.Scalar.update({
+						id: idString,
+						title: output.title as string,
+						authors: output.authors as string,
+						abstract: output.abstract as string,
+						publishedDate: output.publishedDate as number,
+						novelty: output.novelty as string,
+						originality: output.originality as string,
+						challenges: output.challenges as string,
+						relatedResearch: output.relatedResearch as string,
+					});
+				} catch (error) {
+					console.error("Error updating DynamoDB:", error);
+				}
 				console.log("DynamoDB complete:");
 			}
 		}
