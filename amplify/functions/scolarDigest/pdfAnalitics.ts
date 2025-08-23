@@ -1,11 +1,15 @@
 import {
 	BedrockRuntimeClient,
 	ConverseCommand,
+	type ConverseCommandOutput,
 } from "@aws-sdk/client-bedrock-runtime";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 
 const client = new BedrockRuntimeClient({ region: "ap-northeast-1" });
 const s3Client = new S3Client({ region: "ap-northeast-1" });
+
+// レスポンス型をエクスポート
+export type ConverseResponse = ConverseCommandOutput;
 
 interface ConverseParams {
 	prefix?: string;
@@ -136,7 +140,9 @@ const tool = () => {
 	return { tool_definition, tool_name };
 };
 
-export const converse = async (props: ConverseParams) => {
+export const converse = async (
+	props: ConverseParams,
+): Promise<ConverseResponse> => {
 	const { prefix, s3uri } = props;
 
 	// S3 URIからファイル名を取得してサニタイズ

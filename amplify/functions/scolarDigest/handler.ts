@@ -1,6 +1,6 @@
 import type { DynamoDBStreamHandler } from "aws-lambda";
 import { env } from "$amplify/env/scolarDigest";
-import { converse } from "./pdfAnalitics";
+import { converse, ConverseResponse } from "./pdfAnalitics";
 
 export const handler: DynamoDBStreamHandler = async (event) => {
 	console.log("event", event);
@@ -22,11 +22,27 @@ export const handler: DynamoDBStreamHandler = async (event) => {
 				s3uri: fullS3Uri,
 			};
 
-			const response = await converse(input);
+			const response: ConverseResponse = await converse(input);
 			console.log(
 				"Bedrock response:",
 				JSON.stringify(response.output?.message?.content),
 			);
+
+			const output = response.output?.message?.content?.[0].toolUse?.input;
+
+			if (output && typeof output === "object" && "title" in output) {
+				console.log("title:", output.title);
+				console.log("authors:", output.authors);
+				console.log("abstract:", output.abstract);
+				console.log("publishedDate:", output.publishedDate);
+				console.log("novelty:", output.novelty);
+				console.log("originality:", output.originality);
+				console.log("challenges:", output.challenges);
+				console.log("relatedResearch:", output.relatedResearch);
+				console.log("tag1:", output.tag1);
+				console.log("tag2:", output.tag2);
+				console.log("tag3:", output.tag3);
+			}
 		}
 	}
 };
