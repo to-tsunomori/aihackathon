@@ -19,8 +19,11 @@ export const handler: DynamoDBStreamHandler = async (event) => {
 			const { id } = record.dynamodb!.NewImage!;
 			console.log("Analytics s3 pdf data", id);
 
-			const res = await converse(`おはようございます！`);
-			console.log("Bedrock response:", res);
+			const response = await converse(`おはようございます！`);
+			console.log(
+				"Bedrock response:",
+				response.output!.message!.content![0].text,
+			);
 			// const bucket = env.SCOLAR_BUCKET_NAME;
 
 			// const client = new S3Client({ region: env.AWS_REGION });

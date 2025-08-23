@@ -3,7 +3,7 @@ import {
 	ConverseCommand,
 } from "@aws-sdk/client-bedrock-runtime";
 
-const client = new BedrockRuntimeClient({ region: "us-west-2" });
+const client = new BedrockRuntimeClient({ region: "ap-northeast-1" });
 
 export const converse = async (prompt: string, prefix = "") => {
 	const response = await client.send(
