@@ -43,6 +43,7 @@ export const handler: DynamoDBStreamHandler = async (event) => {
 			const output = response.output?.message?.content?.[0].toolUse?.input;
 
 			if (output && typeof output === "object" && "title" in output) {
+				console.log("DynamoDB update:", idString);
 				client.models.Scalar.update({
 					id: idString,
 					title: output.title as string,
@@ -54,6 +55,7 @@ export const handler: DynamoDBStreamHandler = async (event) => {
 					challenges: output.challenges as string,
 					relatedResearch: output.relatedResearch as string,
 				});
+				console.log("DynamoDB complete:");
 			}
 		}
 		console.log("Process Complete!!");
