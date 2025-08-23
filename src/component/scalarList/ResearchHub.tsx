@@ -16,6 +16,9 @@ import { ResearchPaper } from "../../types/research";
 import * as pdfjsLib from "pdfjs-dist";
 import BackupOutlinedIcon from "@mui/icons-material/BackupOutlined";
 import { useState } from "react";
+import { uploadData } from "aws-amplify/storage";
+import { v4 as uuidv4 } from "uuid";
+import { amplifyClient } from "../../amplify";
 
 // サンプルデータ
 const samplePapers: ResearchPaper[] = [
@@ -140,15 +143,13 @@ export function ResearchHub({
 		// ログイン済みの場合は通常通りファイルダイアログを開く
 	};
 
-	const handleFileUpload = async (
-		event: React.ChangeEvent<HTMLInputElement>,
-	) => {
+	const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0];
 		if (!file) return;
 
 		try {
 			if (file.type === "application/pdf") {
-				await handlePDFUpload(file);
+				handlePDFUpload(file);
 			} else {
 				return;
 			}
@@ -157,31 +158,20 @@ export function ResearchHub({
 		}
 	};
 
-	const handlePDFUpload = async (file: File) => {
+	const handlePDFUpload = (file: File) => {
 		try {
-			const arrayBuffer = await file.arrayBuffer();
-			const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+			const uuid = uuidv4();
 
-			let extractedText = "";
+			uploadData({
+				path: `scolar/${uuid}.pdf`,
+				data: file,
+			});
 
-			// 全ページからテキストを抽出
-			for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-				const page = await pdf.getPage(pageNum);
-				const textContent = await page.getTextContent();
-				const pageText = textContent.items
-					.map((item: unknown) => {
-						// TextItemかどうかチェック
-						if (item && typeof item === "object" && "str" in item) {
-							const textItem = item as { str: string };
-							return typeof textItem.str === "string" ? textItem.str : "";
-						}
-						return "";
-					})
-					.join(" ");
-				extractedText += pageText + "\n";
-			}
+			const response = amplifyClient.models.Scalar.create({
+				scolarDataKey: `scolar/${uuid}.pdf`,
+			});
 
-			console.log("抽出されたテキスト:", extractedText.substring(0, 1000));
+			console.log("アップロード成功:", response);
 		} catch (error) {
 			console.error("PDF処理エラー:", error);
 		}
