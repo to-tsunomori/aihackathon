@@ -1,16 +1,9 @@
-import {
-	Card,
-	CardMedia,
-	CardContent,
-	Typography,
-	Chip,
-	Stack,
-} from "@mui/material";
-import { ResearchPaper } from "../../types/research";
+import { Card, CardMedia, CardContent, Typography } from "@mui/material";
+import { Scalar } from "../../types/research";
 
 interface ResearchPaperCardProps {
-	paper: ResearchPaper;
-	onClick?: (paper: ResearchPaper) => void;
+	paper: Scalar;
+	onClick?: (paper: Scalar) => void;
 }
 
 export function ResearchPaperCard({ paper, onClick }: ResearchPaperCardProps) {
@@ -68,7 +61,7 @@ export function ResearchPaperCard({ paper, onClick }: ResearchPaperCardProps) {
 					color="text.secondary"
 					sx={{ mb: 2, fontSize: "0.875rem" }}
 				>
-					{paper.authors.join(", ")}
+					{paper.authors}
 				</Typography>
 
 				<Typography
@@ -86,24 +79,6 @@ export function ResearchPaperCard({ paper, onClick }: ResearchPaperCardProps) {
 				>
 					{paper.abstract}
 				</Typography>
-
-				{paper.tags && paper.tags.length > 0 && (
-					<Stack
-						direction="row"
-						spacing={1}
-						sx={{ flexWrap: "wrap", gap: 0.5 }}
-					>
-						{paper.tags.slice(0, 3).map((tag, index) => (
-							<Chip
-								key={index}
-								label={tag}
-								size="small"
-								variant="outlined"
-								sx={{ fontSize: "0.75rem" }}
-							/>
-						))}
-					</Stack>
-				)}
 			</CardContent>
 		</Card>
 	);

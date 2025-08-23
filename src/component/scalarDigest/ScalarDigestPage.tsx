@@ -9,39 +9,16 @@ import {
 	Divider,
 	Paper,
 } from "@mui/material";
+import { Scalar } from "../../types/research";
 
 interface ScalarDigestPageProps {
 	scalarId: string;
+	scalar: Scalar; // ここは適切な型に置き換えてください
 }
 
-export const ScalarDigestPage: React.FC<ScalarDigestPageProps> = () => {
-	// サンプルデータ（実際にはAPIから取得）
-	const digestData = {
-		title: "ソーシャルメディアが青少年のメンタルヘルスに与える影響",
-		authors: "エミリー・カーター博士、デビッド・リー博士",
-		publishDate: "2024年1月15日",
-		overview: [
-			"本研究論文では、ソーシャルメディアの利用と青少年の精神的幸福との間の複雑な関係を探る。",
-			"サイバーいじめ、社会的比較、オンラインサポートネットワークなどの要因を考慮し、肯定的および否定的な影響の両方を検証する。",
-		],
-		novelty: [
-			"ソーシャルメディアが青少年の発達に与える多面的な影響を、縦断的データを用いて分析した初めての研究の一つである。",
-			"精神的レジリエンスを促進する上で、オンライン上の肯定的な相互作用が果たす役割を定量的に評価した。",
-		],
-		originality: [
-			"ソーシャルメディアの影響を評価するための新しいフレームワークを提案し、個人の脆弱性と保護要因を考慮に入れている。",
-			"デジタルリテラシー教育プログラムの有効性を測定し、青少年のオンライン行動に対する具体的な介入策を提示する。",
-		],
-		challenges: [
-			"今後の課題は、急速に変化するソーシャルメディアプラットフォームの動向を追跡し、長期的な影響を評価し続けることである。",
-			"展望として、保護者、教育者、政策立案者が連携し、青少年が安全にデジタル世界を航行できるような支援環境を構築することが期待される。",
-		],
-		relatedResearch: [
-			"既存の研究では、ソーシャルメディアの利用時間と抑うつ症状との相関関係が指摘されている（Twenge, 2017）。",
-			"オンラインコミュニティが、社会的孤立を感じる青少年に対して重要なサポートを提供できる可能性も示唆されている（Best et al., 2014）。",
-		],
-	};
-
+export const ScalarDigestPage: React.FC<ScalarDigestPageProps> = ({
+	scalar,
+}) => {
 	const SectionComponent: React.FC<{
 		title: string;
 		items: string[];
@@ -65,7 +42,7 @@ export const ScalarDigestPage: React.FC<ScalarDigestPageProps> = () => {
 				{items.map((item, index) => (
 					<ListItem key={index} sx={{ px: 0, py: 0.5 }}>
 						<ListItemText
-							primary={`• ${item}`}
+							primary={`${item}`}
 							sx={{
 								"& .MuiListItemText-primary": {
 									fontSize: "1.125rem",
@@ -99,7 +76,7 @@ export const ScalarDigestPage: React.FC<ScalarDigestPageProps> = () => {
 								mb: 2,
 							}}
 						>
-							{digestData.title}
+							{scalar.title}
 						</Typography>
 						<Typography
 							variant="body1"
@@ -108,26 +85,35 @@ export const ScalarDigestPage: React.FC<ScalarDigestPageProps> = () => {
 								color: "#6b7280",
 							}}
 						>
-							著者: {digestData.authors} | 出版日: {digestData.publishDate}
+							著者: {scalar.authors} | 出版日: {scalar.publishedDate}
 						</Typography>
 					</Box>
 
 					{/* Main Content */}
 					<Box component="main">
-						<SectionComponent title="概要" items={digestData.overview} />
+						<SectionComponent
+							title="概要"
+							items={scalar.abstract ? [scalar.abstract] : []}
+						/>
 
-						<SectionComponent title="新規性" items={digestData.novelty} />
+						<SectionComponent
+							title="新規性"
+							items={scalar.novelty ? [scalar.novelty] : []}
+						/>
 
-						<SectionComponent title="独創性" items={digestData.originality} />
+						<SectionComponent
+							title="独創性"
+							items={scalar.originality ? [scalar.originality] : []}
+						/>
 
 						<SectionComponent
 							title="課題と展望"
-							items={digestData.challenges}
+							items={scalar.challenges ? [scalar.challenges] : []}
 						/>
 
 						<SectionComponent
 							title="関連研究"
-							items={digestData.relatedResearch}
+							items={scalar.relatedResearch ? [scalar.relatedResearch] : []}
 							showDivider={false}
 						/>
 					</Box>
