@@ -1,13 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ScalarDigestPage } from "../../component/scalarDigest/ScalarDigestPage";
-import { useScolar } from "../../hooks/useScolar";
+import { useScolar, useScolarShare } from "../../hooks/useScolar";
 
 export const Route = createFileRoute("/scalar/$scalarId")({
 	component: RouteComponent,
 	loader: async ({ params }) => {
 		const { scalarId } = params;
 		const scalar = await useScolar(scalarId);
-		return { scalar };
+		// ここでスカラーの共有情報を取得
+		const scalarShare = await useScolarShare(scalarId);
+
+		// scalarとscalarShareのうち存在する方を返す
+		const existingData = scalar || scalarShare;
+
+		return { scalar: existingData, scalarShare };
 	},
 });
 

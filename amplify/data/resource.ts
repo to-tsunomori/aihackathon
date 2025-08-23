@@ -22,22 +22,24 @@ const schema = a
 				originality: a.string(), // 独自性
 				challenges: a.string(), // 課題
 				relatedResearch: a.string(), // 関連研究
-				tags: a.hasMany("tag", "scalarId"),
 			})
-			.secondaryIndexes((index) => [index("owner")])
-			.authorization((allow) => [
-				allow.authenticated(),
-				allow.guest().to(["read"]),
-			]),
-		tag: a
+			.authorization((allow) => [allow.owner()]),
+		ScalarShare: a
 			.model({
-				name: a.string(), // タグ名
-				scalarId: a.string(), // スカラーID
-				scalar: a.belongsTo("Scalar", "scalarId"),
+				title: a.string(), // 論文タイトル
+				authors: a.string(), // 著者
+				abstract: a.string(), // 概要
+				imageUrl: a.string(), // 画像URL
+				scolarDataKey: a.string(), // 論文データのS3キー
+				publishedDate: a.integer(), // 発行日
+				novelty: a.string(), // 新規性
+				originality: a.string(), // 独自性
+				challenges: a.string(), // 課題
+				relatedResearch: a.string(), // 関連研究
 			})
 			.authorization((allow) => [
-				allow.authenticated(),
 				allow.guest().to(["read"]),
+				allow.authenticated(),
 			]),
 	})
 	.authorization((allow) => [

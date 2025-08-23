@@ -15,7 +15,15 @@ function Index() {
 			try {
 				setLoading(true);
 				const response = await amplifyClient.models.Scalar.list();
-				setScolars(response.data || []);
+				const responseShare = await amplifyClient.models.ScalarShare.list();
+
+				// responseとresponseShareを結合
+				const combinedData = [
+					...(response.data || []),
+					...(responseShare.data || []),
+				];
+
+				setScolars(combinedData);
 			} catch (error) {
 				console.error("Error fetching scolars:", error);
 				// 認証エラーやその他のエラーの場合は空の配列を設定

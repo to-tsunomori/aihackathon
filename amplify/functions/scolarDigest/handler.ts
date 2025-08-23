@@ -54,18 +54,6 @@ export const handler: DynamoDBStreamHandler = async (event) => {
 					challenges: output.challenges as string,
 					relatedResearch: output.relatedResearch as string,
 				});
-				client.models.tag.create({
-					scalarId: idString,
-					name: output.tag1 as string,
-				});
-				client.models.tag.create({
-					scalarId: idString,
-					name: output.tag2 as string,
-				});
-				client.models.tag.create({
-					scalarId: idString,
-					name: output.tag3 as string,
-				});
 			}
 		}
 		console.log("Process Complete!!");
