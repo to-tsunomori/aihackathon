@@ -1,6 +1,17 @@
 import type { DynamoDBStreamHandler } from "aws-lambda";
 import { env } from "$amplify/env/scolarDigest";
 import { converse, ConverseResponse } from "./pdfAnalitics";
+import type { Schema } from "../../../amplify/data/resource";
+import { generateClient } from "aws-amplify/data";
+import { getAmplifyDataClientConfig } from "@aws-amplify/backend/function/runtime";
+import { Amplify } from "aws-amplify";
+
+const { resourceConfig, libraryOptions } =
+	await getAmplifyDataClientConfig(env);
+
+Amplify.configure(resourceConfig, libraryOptions);
+
+const client = generateClient<Schema>();
 
 export const handler: DynamoDBStreamHandler = async (event) => {
 	console.log("event", event);
@@ -11,6 +22,7 @@ export const handler: DynamoDBStreamHandler = async (event) => {
 		if (record.eventName === "INSERT") {
 			// 新規追加時の処理
 			const { id, scolarDataKey } = record.dynamodb!.NewImage!;
+			const idString = id.S || "";
 			console.log("Analytics s3 pdf data", id);
 			// S3 URIを生成
 			const s3Key = scolarDataKey.S || "";
@@ -31,18 +43,31 @@ export const handler: DynamoDBStreamHandler = async (event) => {
 			const output = response.output?.message?.content?.[0].toolUse?.input;
 
 			if (output && typeof output === "object" && "title" in output) {
-				console.log("title:", output.title);
-				console.log("authors:", output.authors);
-				console.log("abstract:", output.abstract);
-				console.log("publishedDate:", output.publishedDate);
-				console.log("novelty:", output.novelty);
-				console.log("originality:", output.originality);
-				console.log("challenges:", output.challenges);
-				console.log("relatedResearch:", output.relatedResearch);
-				console.log("tag1:", output.tag1);
-				console.log("tag2:", output.tag2);
-				console.log("tag3:", output.tag3);
+				client.models.Scalar.update({
+					id: idString,
+					title: output.title as string,
+					authors: output.authors as string,
+					abstract: output.abstract as string,
+					publishedDate: output.publishedDate as number,
+					novelty: output.novelty as string,
+					originality: output.originality as string,
+					challenges: output.challenges as string,
+					relatedResearch: output.relatedResearch as string,
+				});
+				client.models.tag.create({
+					scalarId: idString,
+					name: output.tag1 as string,
+				});
+				client.models.tag.create({
+					scalarId: idString,
+					name: output.tag2 as string,
+				});
+				client.models.tag.create({
+					scalarId: idString,
+					name: output.tag3 as string,
+				});
 			}
 		}
+		console.log("Process Complete!!");
 	}
 };
