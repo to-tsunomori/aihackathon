@@ -7,12 +7,12 @@ export const storage = defineStorage({
 		"scolar/*": [
 			allow.guest.to(["read"]),
 			allow.authenticated.to(["read", "write", "delete"]),
-			allow.resource(scolarDigest).to(["delete"]),
+			allow.resource(scolarDigest).to(["read"]),
 		],
 		"scolarPicture/*": [
 			allow.guest.to(["read"]),
 			allow.authenticated.to(["read", "write", "delete"]),
-			allow.resource(scolarDigest).to(["delete"]),
+			allow.resource(scolarDigest).to(["read"]),
 		],
 	}),
 });
