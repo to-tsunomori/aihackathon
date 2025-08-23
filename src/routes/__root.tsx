@@ -8,7 +8,7 @@ export const Route = createRootRoute({
 			<AppBar position="static">
 				<Toolbar>
 					<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-						My App
+						Knowledge Digest Notebook
 					</Typography>
 					<Box sx={{ display: "flex", gap: 2 }}>
 						<Link
@@ -34,7 +34,7 @@ export const Route = createRootRoute({
 					</Box>
 				</Toolbar>
 			</AppBar>
-			<Container maxWidth="md" sx={{ py: 4 }}>
+			<Container maxWidth="xl" sx={{ py: 2, px: 1 }}>
 				<Outlet />
 			</Container>
 			<TanStackRouterDevtools />

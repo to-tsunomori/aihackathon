@@ -1,11 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FileUploader } from "../component/FileUploader";
+import { ResearchHub } from "../component/ResearchHub";
+import { BreakpointDebugger } from "../component/BreakpointDebugger";
+import { Box } from "@mui/material";
 
 function Index() {
 	return (
-		<>
-			<FileUploader />
-		</>
+		<Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
+			<ResearchHub />
+			<BreakpointDebugger />
+		</Box>
 	);
 }
 

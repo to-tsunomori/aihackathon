@@ -1,5 +1,6 @@
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography, Divider } from "@mui/material";
 import { createFileRoute } from "@tanstack/react-router";
+import { BreakpointSettings } from "../component/BreakpointSettings";
 
 function About() {
 	return (
@@ -8,7 +9,7 @@ function About() {
 				About
 			</Typography>
 
-			<Paper elevation={3} sx={{ p: 3 }}>
+			<Paper elevation={3} sx={{ p: 3, mb: 3 }}>
 				<Typography variant="body1" paragraph>
 					This is a sample application built with:
 				</Typography>
@@ -24,6 +25,18 @@ function About() {
 					routing capabilities.
 				</Typography>
 			</Paper>
+
+			<Divider sx={{ my: 3 }} />
+
+			<Typography variant="h4" component="h2" gutterBottom>
+				レスポンシブブレイクポイント設定
+			</Typography>
+			<Typography variant="body1" paragraph color="text.secondary">
+				このページでは、アプリケーション全体のレスポンシブブレイクポイントを動的に設定できます。
+				設定は即座に反映され、すべてのページに適用されます。
+			</Typography>
+
+			<BreakpointSettings />
 		</Box>
 	);
 }
