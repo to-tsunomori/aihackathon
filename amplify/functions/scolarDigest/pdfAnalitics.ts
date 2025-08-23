@@ -8,7 +8,6 @@ const client = new BedrockRuntimeClient({ region: "ap-northeast-1" });
 const s3Client = new S3Client({ region: "ap-northeast-1" });
 
 interface ConverseParams {
-	prompt: string;
 	prefix?: string;
 	s3uri: string;
 }
@@ -66,8 +65,79 @@ const getPdfFromS3 = async (s3uri: string): Promise<Uint8Array> => {
 	return result;
 };
 
+const tool = () => {
+	const tool_name = "print_scolar_digest";
+	const description =
+		"与えられたPDFファイルから論文情報を抽出するツールです。titleとauthors以外は日本語で抽出します。";
+
+	const tool_definition = {
+		toolSpec: {
+			name: tool_name,
+			description: description,
+			inputSchema: {
+				json: {
+					type: "object",
+					properties: {
+						title: {
+							type: "string",
+							description: "論文のタイトル(英語)",
+						},
+						authors: {
+							type: "string",
+							description: "著者(英語)",
+						},
+						abstract: {
+							type: "string",
+							description: "論文の概要を日本語で抽出",
+						},
+						publishedDate: {
+							type: "number",
+							description: "発行日をyyyyで抽出",
+						},
+						novelty: {
+							type: "string",
+							description: "新規性を日本語で抽出",
+						},
+						originality: {
+							type: "string",
+							description: "独自性を日本語で抽出",
+						},
+						challenges: {
+							type: "string",
+							description: "課題を日本語で抽出",
+						},
+						relatedResearch: {
+							type: "string",
+							description:
+								"関連研究を日本語で抽出。具体的な論文名があればそれを挙げること",
+						},
+						tag1: {
+							type: "string",
+							description:
+								"この論文につけるタグを考えて、その英単語をひとつ抽出する。",
+						},
+						tag2: {
+							type: "string",
+							description:
+								"この論文につけるタグを考えて、その英単語をひとつ抽出する。ただし、tag1とは異なるもの",
+						},
+						tag3: {
+							type: "string",
+							description:
+								"この論文につけるタグを考えて、その英単語をひとつ抽出する。ただし、tag1,tag2とは異なるもの",
+						},
+					},
+					required: ["title", "authors", "abstract"],
+				},
+			},
+		},
+	};
+
+	return { tool_definition, tool_name };
+};
+
 export const converse = async (props: ConverseParams) => {
-	const { prompt, prefix, s3uri } = props;
+	const { prefix, s3uri } = props;
 
 	// S3 URIからファイル名を取得してサニタイズ
 	const rawFileName = s3uri.split("/").pop() || "document.pdf";
@@ -75,6 +145,17 @@ export const converse = async (props: ConverseParams) => {
 
 	// S3からPDFを取得してUint8Arrayとして取得
 	const pdfBytes = await getPdfFromS3(s3uri);
+
+	// ツールの設定
+	const { tool_definition, tool_name } = tool();
+
+	const toolWithPrompt = `
+        <text>
+        ${tool_name} に従って、PDFファイルから情報を抽出してください。抽出した情報は初学者でもわかりやすく説明をしてください。
+        </text>
+
+        ${tool_name} ツールのみを利用すること。
+        `;
 
 	const response = await client.send(
 		new ConverseCommand({
@@ -84,7 +165,7 @@ export const converse = async (props: ConverseParams) => {
 					role: "user",
 					content: [
 						{
-							text: prompt,
+							text: toolWithPrompt,
 						},
 						{
 							document: {
@@ -110,6 +191,14 @@ export const converse = async (props: ConverseParams) => {
 						]
 					: []),
 			],
+			toolConfig: {
+				tools: [tool_definition],
+				toolChoice: {
+					tool: {
+						name: tool_name,
+					},
+				},
+			},
 		}),
 	);
 	return response;

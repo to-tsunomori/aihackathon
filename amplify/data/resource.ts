@@ -22,7 +22,6 @@ const schema = a.schema({
 			imageUrl: a.string(), // 画像URL
 			scolarDataKey: a.string(), // 論文データのS3キー
 			publishedDate: a.string(), // 発行日
-			overview: a.string(), // 概要
 			novelty: a.string(), // 新規性
 			originality: a.string(), // 独自性
 			challenges: a.string(), // 課題
