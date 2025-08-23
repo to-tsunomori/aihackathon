@@ -15,6 +15,7 @@ const schema = a.schema({
 
 	Scalar: a
 		.model({
+			owner: a.string(), // オーナー
 			title: a.string(), // 論文タイトル
 			authors: a.string(), // 著者
 			abstract: a.string(), // 概要
@@ -28,6 +29,7 @@ const schema = a.schema({
 			relatedResearch: a.string(), // 関連研究
 			tags: a.hasMany("tag", "scalarId"),
 		})
+		.secondaryIndexes((index) => [index("owner")])
 		.authorization((allow) => [allow.publicApiKey()]),
 
 	tag: a
