@@ -12,7 +12,6 @@ import {
 import { Scalar } from "../../types/research";
 
 interface ScalarDigestPageProps {
-	scalarId: string;
 	scalar: Scalar; // ここは適切な型に置き換えてください
 }
 

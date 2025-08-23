@@ -13,5 +13,8 @@ export const Route = createFileRoute("/scalar/$scalarId")({
 
 function RouteComponent() {
 	const { scalar } = Route.useLoaderData();
+	if (!scalar) {
+		return <div>Scalar not found</div>;
+	}
 	return <ScalarDigestPage scalar={scalar} />;
 }
