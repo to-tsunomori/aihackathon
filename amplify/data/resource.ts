@@ -7,24 +7,48 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
-  Todo: a
-    .model({
-      content: a.string(),
-    })
-    .authorization((allow) => [allow.publicApiKey()]),
+	Todo: a
+		.model({
+			content: a.string(),
+		})
+		.authorization((allow) => [allow.publicApiKey()]),
+
+	Scalar: a
+		.model({
+			title: a.string(), // 論文タイトル
+			authors: a.string(), // 著者
+			abstract: a.string(), // 概要
+			imageUrl: a.string(), // 画像URL
+			publishedDate: a.string(), // 発行日
+			overview: a.string(), // 概要
+			novelty: a.string(), // 新規性
+			originality: a.string(), // 独自性
+			challenges: a.string(), // 課題
+			relatedResearch: a.string(), // 関連研究
+			tags: a.hasMany("tag", "scalarId"),
+		})
+		.authorization((allow) => [allow.publicApiKey()]),
+
+	tag: a
+		.model({
+			name: a.string(), // タグ名
+			scalarId: a.string(), // スカラーID
+			scalar: a.belongsTo("Scalar", "scalarId"),
+		})
+		.authorization((allow) => [allow.publicApiKey()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
 
 export const data = defineData({
-  schema,
-  authorizationModes: {
-    defaultAuthorizationMode: "apiKey",
-    // API Key is used for a.allow.public() rules
-    apiKeyAuthorizationMode: {
-      expiresInDays: 30,
-    },
-  },
+	schema,
+	authorizationModes: {
+		defaultAuthorizationMode: "apiKey",
+		// API Key is used for a.allow.public() rules
+		apiKeyAuthorizationMode: {
+			expiresInDays: 30,
+		},
+	},
 });
 
 /*== STEP 2 ===============================================================
