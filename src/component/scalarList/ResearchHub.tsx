@@ -1,11 +1,21 @@
-import { Box, Typography, Button, Container, styled } from "@mui/material";
+import {
+	Box,
+	Typography,
+	Button,
+	Container,
+	styled,
+	Snackbar,
+	Alert,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { ResearchPaperCard } from "./ResearchPaperCard";
 import { ResponsiveGrid } from "./ResponsiveComponents";
 import { useBreakpoint } from "../../hooks/useBreakpoint";
+import { useUser } from "../../hooks/useUser";
 import { ResearchPaper } from "../../types/research";
 import * as pdfjsLib from "pdfjs-dist";
 import BackupOutlinedIcon from "@mui/icons-material/BackupOutlined";
+import { useState } from "react";
 
 // サンプルデータ
 const samplePapers: ResearchPaper[] = [
@@ -101,6 +111,8 @@ export function ResearchHub({
 	onPaperClick,
 }: ResearchHubProps) {
 	const { isMobile, isTablet } = useBreakpoint();
+	const { isAuthenticated } = useUser();
+	const [snackbarOpen, setSnackbarOpen] = useState(false);
 
 	const handleAddPaper = () => {
 		if (onAddPaper) {
@@ -112,6 +124,20 @@ export function ResearchHub({
 		if (onPaperClick) {
 			onPaperClick(paper);
 		}
+	};
+
+	const handleSnackbarClose = () => {
+		setSnackbarOpen(false);
+	};
+
+	const handleUploadButtonClick = (event: React.MouseEvent) => {
+		// 未ログイン状態のチェック
+		if (!isAuthenticated) {
+			event.preventDefault(); // ファイルダイアログを開かない
+			setSnackbarOpen(true);
+			return;
+		}
+		// ログイン済みの場合は通常通りファイルダイアログを開く
 	};
 
 	const handleFileUpload = async (
@@ -193,6 +219,7 @@ export function ResearchHub({
 						variant="outlined"
 						startIcon={<BackupOutlinedIcon />}
 						size="large"
+						onClick={handleUploadButtonClick}
 					>
 						論文を追加
 						<VisuallyHiddenInput
@@ -203,6 +230,20 @@ export function ResearchHub({
 					</Button>
 				</Box>
 			</Box>
+
+			{/* Info Message */}
+			<Alert
+				severity="info"
+				sx={{
+					mb: 4,
+					borderRadius: 2,
+				}}
+			>
+				<Typography variant="body2">
+					アップロードした論文データは個人のみに表示され、他のユーザーには見えません。現在表示されている論文は、機能説明用のサンプルデータです。
+					未ログインユーザにも見える設定にしています。
+				</Typography>
+			</Alert>
 
 			{/* Paper Grid */}
 			<ResponsiveGrid
@@ -254,6 +295,22 @@ export function ResearchHub({
 					</Button>
 				</Box>
 			)}
+
+			{/* ログイン促進スナックバー */}
+			<Snackbar
+				open={snackbarOpen}
+				autoHideDuration={6000}
+				onClose={handleSnackbarClose}
+				anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+			>
+				<Alert
+					onClose={handleSnackbarClose}
+					severity="warning"
+					sx={{ width: "100%" }}
+				>
+					論文をアップロードするにはログインが必要です
+				</Alert>
+			</Snackbar>
 		</Container>
 	);
 }
