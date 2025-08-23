@@ -5,4 +5,8 @@ export const scolarDigest = defineFunction({
 	name: "scolarDigest",
 	// optionally specify a path to your handler (defaults to "./handler.ts")
 	entry: "./handler.ts",
+	timeoutSeconds: 300,
+	environment: {
+		// 必要に応じて環境変数を追加
+	},
 });

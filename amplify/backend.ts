@@ -15,7 +15,9 @@ const backend = defineBackend({
 });
 
 const scalarTable = backend.data.resources.tables["Scalar"];
-const policy = new Policy(
+
+// DynamoDB Stream用のポリシー
+const dynamoDbPolicy = new Policy(
 	Stack.of(scalarTable),
 	"MyDynamoDBFunctionStreamingPolicy",
 	{
@@ -33,8 +35,28 @@ const policy = new Policy(
 		],
 	},
 );
+
+// Bedrock用のポリシー
+const bedrockPolicy = new Policy(
+	Stack.of(scalarTable),
+	"MyBedrockInvokeModelPolicy",
+	{
+		statements: [
+			new PolicyStatement({
+				effect: Effect.ALLOW,
+				actions: [
+					"bedrock:InvokeModel",
+					"bedrock:InvokeModelWithResponseStream",
+				],
+				resources: ["*"],
+			}),
+		],
+	},
+);
 // DynamoDBのStreamのトリガーを追加
-backend.scolarDigest.resources.lambda.role?.attachInlinePolicy(policy);
+backend.scolarDigest.resources.lambda.role?.attachInlinePolicy(dynamoDbPolicy);
+backend.scolarDigest.resources.lambda.role?.attachInlinePolicy(bedrockPolicy);
+
 const mapping = new EventSourceMapping(
 	Stack.of(scalarTable),
 	"MyDynamoDBFunctionTodoEventStreamMapping",
@@ -52,4 +74,5 @@ const mapping = new EventSourceMapping(
 	},
 );
 
-mapping.node.addDependency(policy);
+mapping.node.addDependency(dynamoDbPolicy);
+mapping.node.addDependency(bedrockPolicy);
