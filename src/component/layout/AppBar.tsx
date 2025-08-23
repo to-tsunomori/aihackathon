@@ -1,7 +1,19 @@
-import { AppBar, Box, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import { Link } from "@tanstack/react-router";
+import { useUser } from "../../hooks/useUser";
 
 export const CustomAppBar: React.FC = () => {
+	const { isAuthenticated, isLoading, user, onSignOut } = useUser();
+
+	console.log(
+		"AppBar - isAuthenticated:",
+		isAuthenticated,
+		"isLoading:",
+		isLoading,
+		"user:",
+		user,
+	);
+
 	return (
 		<AppBar position="static">
 			<Toolbar>
@@ -29,6 +41,30 @@ export const CustomAppBar: React.FC = () => {
 					>
 						About
 					</Link>
+					{isAuthenticated ? (
+						<Button
+							color="inherit"
+							onClick={onSignOut}
+							sx={{
+								color: "white",
+								textDecoration: "none",
+								padding: "8px 16px",
+							}}
+						>
+							Logout
+						</Button>
+					) : (
+						<Link
+							to="/login"
+							style={{
+								color: "white",
+								textDecoration: "none",
+								padding: "8px 16px",
+							}}
+						>
+							Login
+						</Link>
+					)}
 				</Box>
 			</Toolbar>
 		</AppBar>
